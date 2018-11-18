@@ -1,8 +1,10 @@
 import cv2
 
+import filters
 from capture_controller import CaptureController
 from constants import KEY_CODE_SPACE, KEY_CODE_TAB, KEY_CODE_ESCAPE, \
-    SCREENSHOT_FILENAME, SCREENCAST_FILENAME, WINDOW_NAME
+    SCREENSHOT_FILENAME, SCREENCAST_FILENAME, WINDOW_NAME, KEY_CODE_0, \
+    KEY_CODE_1, KEY_CODE_2, KEY_CODE_3, KEY_CODE_4, KEY_CODE_5, KEY_CODE_6
 from helpers import exists
 from window import Window
 
@@ -15,15 +17,19 @@ class AR:
             window_manager=self._window,
             mirror_preview=True,
         )
+        self._frame = None
+        self._filter = None
 
     def run(self):
         self._window.create()
         while self._window.is_created:
             self._capture_controller.enter_frame()
-            frame = self._capture_controller.frame
+            self._frame = self._capture_controller.frame
 
-            if exists(frame):
-                pass
+            if exists(self._frame):
+
+                if exists(self._filter):
+                    self._filter.apply(self._frame, dst=self._frame)
 
             self._capture_controller.exit_frame()
             self._window.process_events()
@@ -43,6 +49,24 @@ class AR:
         elif keycode == KEY_CODE_ESCAPE:
             # Quit
             self._window.destroy()
+
+        elif keycode == KEY_CODE_0:
+            self._filter = None
+
+        elif keycode == KEY_CODE_1:
+            self._filter = filters.SharpenFilter()
+
+        elif keycode == KEY_CODE_2:
+            self._filter = filters.BlurFilter()
+
+        elif keycode == KEY_CODE_3:
+            self._filter = filters.EdgesFilter()
+
+        elif keycode == KEY_CODE_4:
+            self._filter = filters.StrokeEdgesFilter()
+
+        elif keycode == KEY_CODE_5:
+            self._filter = filters.EmbossFilter()
 
 
 if __name__ == "__main__":
