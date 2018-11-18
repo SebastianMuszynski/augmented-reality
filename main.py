@@ -37,7 +37,10 @@ class AR:
                 # utils.draw_contours(self._frame)
 
                 # Detect lines
-                utils.detect_lines(self._frame)
+                # utils.detect_lines(self._frame)
+
+                # Detect corners (Harris)
+                utils.detect_corners(self._frame)
 
             self._capture_controller.exit_frame()
             self._window.process_events()

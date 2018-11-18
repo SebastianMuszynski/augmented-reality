@@ -59,3 +59,10 @@ def detect_lines(src):
 
     for x1, y1, x2, y2 in lines[0]:
         cv2.line(src, pt1=(x1, y1), pt2=(x2, y2), color=(0, 255, 0), thickness=1)
+
+
+def detect_corners(src):
+    img_gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+    img_gray = np.float32(img_gray)
+    img_corners = cv2.cornerHarris(src=img_gray, blockSize=2, ksize=23, k=0.04)
+    src[img_corners > 0.01 * img_corners.max()] = [0, 0, 255]
