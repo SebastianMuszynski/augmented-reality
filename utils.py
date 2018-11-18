@@ -8,8 +8,8 @@ def draw_contours(src,
                   draw_circles=False,
                   draw_bounding_boxes=False):
 
-    img_copy = src.copy()
-    img_binary = cv2.cvtColor(img_copy, cv2.COLOR_BGR2GRAY)
+    img = src.copy()
+    img_binary = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     result, img_threshold = cv2.threshold(
         src=img_binary,
@@ -42,3 +42,20 @@ def draw_contours(src,
 
     if draw_all:
         cv2.drawContours(src, contours, contourIdx=-1, color=(0, 255, 0), thickness=1)
+
+
+def detect_lines(src):
+    img = src.copy()
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_edges = cv2.Canny(img_gray, threshold1=50, threshold2=120)
+    lines = cv2.HoughLinesP(
+        image=img_edges,
+        rho=1,
+        theta=np.pi/180,
+        threshold=100,
+        minLineLength=20,
+        maxLineGap=5,
+    )
+
+    for x1, y1, x2, y2 in lines[0]:
+        cv2.line(src, pt1=(x1, y1), pt2=(x2, y2), color=(0, 255, 0), thickness=1)

@@ -34,7 +34,10 @@ class AR:
                     self._filter.apply(self._frame, dst=self._frame)
 
                 # Draw contours
-                utils.draw_contours(self._frame)
+                # utils.draw_contours(self._frame)
+
+                # Detect lines
+                utils.detect_lines(self._frame)
 
             self._capture_controller.exit_frame()
             self._window.process_events()
