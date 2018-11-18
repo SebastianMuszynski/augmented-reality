@@ -1,6 +1,7 @@
 import cv2
 
 import filters
+import utils
 from capture_controller import CaptureController
 from constants import KEY_CODE_SPACE, KEY_CODE_TAB, KEY_CODE_ESCAPE, \
     SCREENSHOT_FILENAME, SCREENCAST_FILENAME, WINDOW_NAME, KEY_CODE_0, \
@@ -28,8 +29,12 @@ class AR:
 
             if exists(self._frame):
 
+                # Apply a filter
                 if exists(self._filter):
                     self._filter.apply(self._frame, dst=self._frame)
+
+                # Draw contours
+                utils.draw_contours(self._frame)
 
             self._capture_controller.exit_frame()
             self._window.process_events()
