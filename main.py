@@ -7,8 +7,9 @@ from constants import KEY_CODE_SPACE, KEY_CODE_TAB, KEY_CODE_ESCAPE, \
     SCREENSHOT_FILENAME, SCREENCAST_FILENAME, WINDOW_NAME, KEY_CODE_0, \
     KEY_CODE_1, KEY_CODE_2, KEY_CODE_3, KEY_CODE_4, KEY_CODE_5, KEY_CODE_6
 from helpers import exists
+from model_loader import ModelLoader
 from window import Window
-
+import numpy as np
 
 class AR:
     def __init__(self):
@@ -20,8 +21,12 @@ class AR:
         )
         self._frame = None
         self._filter = None
+        self._model = None
+        self._homography = None
+        self._camera_parameters = np.array([[800, 0, 320], [0, 800, 240], [0, 0, 1]])
 
     def run(self):
+        self._model = ModelLoader('fox.obj', swapyz=True)
         self._window.create()
         while self._window.is_created:
             self._capture_controller.enter_frame()
@@ -40,7 +45,10 @@ class AR:
                 # utils.detect_lines(self._frame)
 
                 # Detect corners (Harris)
-                utils.detect_corners(self._frame)
+                # utils.detect_corners(self._frame)
+
+                # Feature matching
+                utils.flann(self._frame, self._camera_parameters, self._model)
 
             self._capture_controller.exit_frame()
             self._window.process_events()
