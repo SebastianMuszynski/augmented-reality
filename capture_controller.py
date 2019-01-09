@@ -136,4 +136,5 @@ class CaptureController:
                 video_fps,
                 video_size,
             )
+
         self._video_writer.write(self._frame)
