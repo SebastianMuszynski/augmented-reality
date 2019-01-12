@@ -28,5 +28,4 @@ python3 main.py
 | <kbd>6</kbd> | Draw contours. |
 | <kbd>7</kbd> | Draw lines. |
 | <kbd>8</kbd> | Draw corners. |
-| <kbd>9</kbd> | Show/hide marker preview. |
 | <kbd>0</kbd> | Reset settings. |

@@ -15,6 +15,7 @@ class Window:
 
     def create(self):
         cv2.namedWindow(self._name)
+        cv2.moveWindow(self._name, 220, 120)
         self._is_created = True
 
     def show(self, frame):

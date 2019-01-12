@@ -1,11 +1,11 @@
+import numpy as np
+
 WINDOW_NAME = 'AR'
 
 SCREENSHOT_FILENAME = 'screenshot.png'
 SCREENCAST_FILENAME = 'screencast.avi'
 
-KEY_CODE_SPACE = 32
-KEY_CODE_TAB = 9
-KEY_CODE_ESCAPE = 27
+WEB_CAMERA_SOURCE = 0
 
 KEY_CODE_0 = 48
 KEY_CODE_1 = 49
@@ -17,3 +17,19 @@ KEY_CODE_6 = 54
 KEY_CODE_7 = 55
 KEY_CODE_8 = 56
 KEY_CODE_9 = 57
+KEY_CODE_SPACE = 32
+KEY_CODE_TAB = 9
+KEY_CODE_ESCAPE = 27
+
+METHOD_ORB = 'orb'
+METHOD_SIFT = 'sift'
+
+MARKER_PATH = './markers/marker_hiro.png'
+MODEL_PATH = './models/fox.obj'
+VIDEO_PATH = './videos/vid2-high.mov'
+
+COLOR_BROWN = (0, 88, 183)
+
+CAMERA_PARAMETERS = np.array([[1000, 0, 640],
+                              [0, 1000, 360],
+                              [0, 0, 1]])
