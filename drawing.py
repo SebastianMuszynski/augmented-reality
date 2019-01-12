@@ -198,12 +198,9 @@ class Drawing:
         return img
 
     @staticmethod
-    def match_and_render(src, obj, method=const.METHOD_ORB):
+    def match_and_render(img_src, img_marker, obj, method=const.METHOD_ORB):
 
         assert method in [const.METHOD_ORB, const.METHOD_SIFT]
-
-        img_marker = cv2.imread(const.MARKER_PATH, cv2.IMREAD_GRAYSCALE)
-        img_src = src
 
         min_matches = {
             const.METHOD_ORB: 20,

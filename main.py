@@ -9,13 +9,15 @@ from window import Window
 
 
 class AR:
-    def __init__(self):
+    def __init__(self, method=const.METHOD_ORB, use_video=False):
         self._window = Window(const.WINDOW_NAME, self.on_keypress)
         self._frame = None
         self._model = ModelLoader(const.MODEL_PATH, swap_yz=True)
+        self._img_marker = cv2.imread(const.MARKER_PATH, cv2.IMREAD_GRAYSCALE)
+        self._method = method
 
         self._capture_controller = CaptureController(
-            capture=self._get_capture_source(use_video=False),
+            capture=self._get_capture_source(use_video),
             window_manager=self._window,
             mirror_preview=True,
         )
@@ -63,7 +65,7 @@ class AR:
         if corners:
             Drawing.detect_corners(self._frame)
 
-        Drawing.match_and_render(self._frame, self._model, const.METHOD_ORB)
+        Drawing.match_and_render(self._frame, self._img_marker, self._model, const.METHOD_ORB)
 
     def on_keypress(self, keycode):
         if keycode == const.KEY_CODE_SPACE:
@@ -117,4 +119,4 @@ class AR:
 
 
 if __name__ == "__main__":
-    AR().run()
+    AR(method=const.METHOD_ORB, use_video=False).run()
