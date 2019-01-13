@@ -28,7 +28,7 @@ MARKER_PATH = './markers/marker_hiro.png'
 MODEL_PATH = './models/fox.obj'
 VIDEO_PATH = './videos/vid2-high.mov'
 
-COLOR_BROWN = (0, 88, 183)
+MODEL_COLOR = (183, 28, 28)
 
 CAMERA_PARAMETERS = np.array([[1000, 0, 640],
                               [0, 1000, 360],

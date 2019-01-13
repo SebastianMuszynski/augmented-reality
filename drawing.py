@@ -193,7 +193,8 @@ class Drawing:
             points = np.dot(points, scale_matrix)
             points = np.array([[p[0] + w / 2, p[1] + h / 2, p[2]] for p in points])
             img_points = np.int32(cv2.perspectiveTransform(points.reshape(-1, 1, 3), projection))
-            cv2.fillConvexPoly(img, img_points, const.COLOR_BROWN)
+            color = const.MODEL_COLOR[::-1]
+            cv2.fillConvexPoly(img, img_points, color)
 
         return img
 
