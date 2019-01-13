@@ -24,9 +24,13 @@ KEY_CODE_ESCAPE = 27
 METHOD_ORB = 'orb'
 METHOD_SIFT = 'sift'
 
+MATCHES_BEST = 'best'
+MATCHES_KNN = 'knn'
+MATCHES_FLANN = 'flann'
+
 MARKER_PATH = './markers/marker_hiro.png'
 MODEL_PATH = './models/fox.obj'
-VIDEO_PATH = './videos/vid2-high.mov'
+VIDEO_PATH = './videos/raw/vid2-high.mov'
 
 MODEL_COLOR = (183, 28, 28)
 

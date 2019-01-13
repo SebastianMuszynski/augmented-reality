@@ -74,7 +74,53 @@ class Drawing:
         src[img_corners > 0.01 * img_corners.max()] = [0, 0, 255]
 
     @staticmethod
-    def get_matches_using_orb(img_src, img_marker):
+    def get_matches(des1, des2, method=const.MATCHES_BEST):
+        assert method in [
+            const.MATCHES_BEST,
+            const.MATCHES_KNN,
+            const.MATCHES_FLANN,
+        ]
+
+        matches = {
+            const.MATCHES_BEST: Drawing.get_best_matches,
+            const.MATCHES_KNN: Drawing.get_knn_matches,
+            const.MATCHES_FLANN: Drawing.get_flann_matches,
+        }[method](des1, des2)
+
+        return matches
+
+    @staticmethod
+    def get_best_matches(des1, des2):
+        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        matches = bf.match(des1, des2)
+        matches = sorted(matches, key=lambda x: x.distance)
+        matches = list(filter(lambda m: m.distance < 40, matches))
+        return matches
+
+    @staticmethod
+    def get_knn_matches(des1, des2, k=2):
+        bf = cv2.BFMatcher()
+        all_matches = bf.knnMatch(des1, des2, k)
+        matches = []
+        for m, n in all_matches:
+            if m.distance < 0.75 * n.distance:
+                matches.append(m)
+        return matches
+
+    @staticmethod
+    def get_flann_matches(des1, des2):
+        index_params = dict(algorithm=0, trees=5)
+        search_params = dict(checks=50)
+        flann = cv2.FlannBasedMatcher(index_params, search_params)
+        all_matches = flann.knnMatch(des1, des2, k=2)
+        matches = []
+        for m, n in all_matches:
+            if m.distance < 0.75 * n.distance:
+                matches.append(m)
+        return matches
+
+    @staticmethod
+    def get_matches_using_orb(img_src, img_marker, method):
         orb = cv2.ORB_create()
         kp1, des1 = orb.detectAndCompute(img_marker, None)
         kp2, des2 = orb.detectAndCompute(img_src, None)
@@ -82,14 +128,11 @@ class Drawing:
         if not exists(des1) or not exists(des2):
             return None, None, None
 
-        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-        matches = bf.match(des1, des2)
-        matches = sorted(matches, key=lambda x: x.distance)
-        matches = list(filter(lambda m: m.distance < 40, matches))
+        matches = Drawing.get_matches(des1, des2, method)
         return matches, kp1, kp2
 
     @staticmethod
-    def get_matches_using_sift(img_src, img_marker):
+    def get_matches_using_sift(img_src, img_marker, method):
         sift = cv2.xfeatures2d.SIFT_create()
         kp1, des1 = sift.detectAndCompute(img_marker, None)
         kp2, des2 = sift.detectAndCompute(img_src, None)
@@ -97,21 +140,12 @@ class Drawing:
         if not exists(des1) or not exists(des2):
             return None, None, None
 
-        index_params = dict(algorithm=0, trees=5)
-        search_params = dict(checks=50)
-        flann = cv2.FlannBasedMatcher(index_params, search_params)
-        all_matches = flann.knnMatch(des1, des2, k=2)
-
-        matches = []
-        for m, n in all_matches:
-            if m.distance < 0.75 * n.distance:
-                matches.append(m)
-
+        matches = Drawing.get_matches(des1, des2, method)
         return matches, kp1, kp2
 
     @staticmethod
     def draw_matches_preview(img_src, img_marker, kp1, kp2, matches):
-        img_result = cv2.drawMatches(img_marker, kp1, img_src, kp2, matches[:10], 0, flags=2)
+        img_result = cv2.drawMatches(img_marker, kp1, img_src, kp2, matches, 0, flags=2)
         cv2.imshow('Matches preview', img_result)
 
     @staticmethod
@@ -199,19 +233,39 @@ class Drawing:
         return img
 
     @staticmethod
+    def draw_marker_matches(img_src, img_marker, homography, method):
+        h, w = img_marker.shape
+
+        img_warped = cv2.warpPerspective(
+            img_src,
+            homography,
+            (w, h),
+            flags=cv2.WARP_INVERSE_MAP | cv2.INTER_CUBIC,
+        )
+
+        img_warped = cv2.cvtColor(img_warped, cv2.COLOR_BGR2GRAY)
+
+        matches, kp1, kp2 = {
+            const.METHOD_ORB: Drawing.get_matches_using_orb,
+            const.METHOD_SIFT: Drawing.get_matches_using_sift,
+        }[method](img_warped, img_marker, const.MATCHES_BEST)
+
+        Drawing.draw_matches_preview(img_warped, img_marker, kp1, kp2, matches)
+
+    @staticmethod
     def match_and_render(img_src, img_marker, obj, method=const.METHOD_ORB):
 
         assert method in [const.METHOD_ORB, const.METHOD_SIFT]
 
         min_matches = {
-            const.METHOD_ORB: 20,
+            const.METHOD_ORB: 15,
             const.METHOD_SIFT: 20,
         }[method]
 
         matches, kp1, kp2 = {
             const.METHOD_ORB: Drawing.get_matches_using_orb,
             const.METHOD_SIFT: Drawing.get_matches_using_sift,
-        }[method](img_src, img_marker)
+        }[method](img_src, img_marker, const.MATCHES_BEST)
 
         if not matches:
             return
@@ -220,7 +274,11 @@ class Drawing:
             homography, mask = Drawing.find_homography(matches, kp1, kp2)
 
             if exists(homography):
+                # Draw marker outline
                 # Drawing.draw_marker_border(img_src, img_marker, homography)
-                Drawing.draw_projection(img_src, img_marker, homography, obj)
 
-            # Drawing.draw_matches_preview(img_src, img_marker, kp1, kp2, matches)
+                # Draw marker matches
+                # Drawing.draw_marker_matches(img_src, img_marker, homography, method)
+
+                # Draw projection
+                Drawing.draw_projection(img_src, img_marker, homography, obj)
