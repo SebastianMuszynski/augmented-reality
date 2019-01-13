@@ -253,13 +253,13 @@ class Drawing:
         Drawing.draw_matches_preview(img_warped, img_marker, kp1, kp2, matches)
 
     @staticmethod
-    def match_and_render(img_src, img_marker, obj, method=const.METHOD_ORB):
+    def match_and_render(img_src, img_marker, obj, method):
 
         assert method in [const.METHOD_ORB, const.METHOD_SIFT]
 
         min_matches = {
             const.METHOD_ORB: 15,
-            const.METHOD_SIFT: 20,
+            const.METHOD_SIFT: 15,
         }[method]
 
         matches, kp1, kp2 = {
@@ -282,3 +282,6 @@ class Drawing:
 
                 # Draw projection
                 Drawing.draw_projection(img_src, img_marker, homography, obj)
+
+            # Draw matches on source frame
+            # Drawing.draw_matches_preview(img_src, img_marker, kp1, kp2, matches)

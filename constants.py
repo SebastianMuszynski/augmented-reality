@@ -28,7 +28,10 @@ MATCHES_BEST = 'best'
 MATCHES_KNN = 'knn'
 MATCHES_FLANN = 'flann'
 
-MARKER_PATH = './markers/marker_hiro.png'
+MARKER_PATH_HIRO = './markers/marker_hiro.png'
+MARKER_PATH_QR = './markers/marker_qr.png'
+MARKER_PATH = MARKER_PATH_QR
+
 MODEL_PATH = './models/fox.obj'
 VIDEO_PATH = './videos/raw/vid2-high.mov'
 

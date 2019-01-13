@@ -14,6 +14,7 @@ class AR:
         self._frame = None
         self._model = ModelLoader(const.MODEL_PATH, swap_yz=True)
         self._img_marker = cv2.imread(const.MARKER_PATH, cv2.IMREAD_GRAYSCALE)
+        self._img_marker_2 = cv2.imread(const.MARKER_PATH_HIRO, cv2.IMREAD_GRAYSCALE)
         self._method = method
 
         self._capture_controller = CaptureController(
@@ -66,6 +67,9 @@ class AR:
             Drawing.detect_corners(self._frame)
 
         Drawing.match_and_render(self._frame, self._img_marker, self._model, const.METHOD_ORB)
+
+        # Detect two markers at the same time
+        # Drawing.match_and_render(self._frame, self._img_marker_2, self._model, const.METHOD_ORB)
 
     def on_keypress(self, keycode):
         if keycode == const.KEY_CODE_SPACE:
